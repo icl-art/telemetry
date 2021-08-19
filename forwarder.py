@@ -1,11 +1,9 @@
 import asyncio
 import websockets
-from datetime import datetime
 import struct
 
-IP = "192.168.1.16"
+IP = "35.229.97.111"
 UDP_PORT = 8080
-WS_PORT = 8081
 
 FRAME_SIZE = 4 + 12 + 12 + 12 + 4  # time, accel, gyro, mag, alt
 
@@ -125,7 +123,7 @@ async def main():
 
     loop = asyncio.get_running_loop()
 
-    await websockets.serve(ws.handler, IP, WS_PORT)
+    await websockets.serve(ws.handler, IP)
     await loop.create_datagram_endpoint(
         lambda: UDPProtocol(queue),
         local_addr=(IP, UDP_PORT),
