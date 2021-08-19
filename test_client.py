@@ -1,7 +1,7 @@
 import asyncio
 import websockets
 
-IP = "35.229.97.111"
+IP = "10.142.0.2"
 
 async def hello():
     uri = f"ws://{IP}"

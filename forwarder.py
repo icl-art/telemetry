@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import struct
 
-IP = "35.229.97.111"
+IP = "10.142.0.2"
 UDP_PORT = 8080
 
 FRAME_SIZE = 4 + 12 + 12 + 12 + 4  # time, accel, gyro, mag, alt
