@@ -133,7 +133,7 @@ async def main():
     queue = asyncio.Queue()
     ws = Websockets(queue)
 
-    loop = asyncio.get_running_loop()
+    loop = asyncio.get_event_loop()
 
     await websockets.serve(ws.handler, IP)
     await loop.create_datagram_endpoint(
