@@ -6,7 +6,7 @@ let canvas = document.getElementById('canvas');
 
 // Setup
 let scene = new THREE.Scene();
-scene.background = new THREE.Color(0x2e3131);
+scene.background = new THREE.Color(0x121212);
 let cHeight = canvas.clientHeight * 3.5;
 let cWidth = canvas.clientWidth * 2.5;
 let camera = new THREE.PerspectiveCamera(75, cWidth / cHeight, 0.1, 10000);
@@ -28,7 +28,7 @@ window.addEventListener("resize", function () {
 let loader = new STLLoader();
 loader.load('https://shreybohra.com/wp-content/uploads/ICLR/telemetry/apex.png', function (geometry) {
     console.log(geometry);
-    let material = new THREE.MeshBasicMaterial({
+    let material = new THREE.MeshNormalMaterial({
         color: 0x6c7a89,
     });
     let mesh = new THREE.Mesh(geometry, material);
