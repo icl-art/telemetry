@@ -27,22 +27,34 @@ class Frame:
         self.alt = alt
 
     def to_json(self):
-        return "{" + f"""
-        \"time\": {self.time},
-        \"accel_x\": {self.accel_x},
-        \"accel_y\": {self.accel_y},
-        \"accel_z\": {self.accel_z},
-        \"gyro_x\": {self.gyro_x},
-        \"gyro_y\": {self.gyro_y},
-        \"gyro_z\": {self.gyro_z},
-        \"mag_x\": {self.mag_x},
-        \"mag_y\": {self.mag_y},
-        \"mag_z\": {self.mag_z},
-        \"alt\": {self.alt}
-        """.replace(" ", "") + "}"
+        return "{" + """
+        \"time\": {time},
+        \"accel_x\": {accel_x},
+        \"accel_y\": {accel_y},
+        \"accel_z\": {accel_z},
+        \"gyro_x\": {gyro_x},
+        \"gyro_y\": {gyro_y},
+        \"gyro_z\": {gyro_z},
+        \"mag_x\": {mag_x},
+        \"mag_y\": {mag_y},
+        \"mag_z\": {mag_z},
+        \"alt\": {alt}
+        """.format(
+            time = self.time,
+            accel_x = self.accel_x,
+            accel_y = self.accel_y,
+            accel_z = self.accel_z,
+            gyro_x = self.gyro_x,
+            gyro_y = self.gyro_y,
+            gyro_z = self.gyro_z,
+            mag_x = self.mag_x,
+            mag_y = self.mag_y,
+            mag_z = self.mag_z,
+            alt = self.alt
+        ).replace(" ", "") + "}"
 
     def to_csv(self):
-        return f"{self.time},{self.accel_x},{self.accel_y},{self.accel_z},{self.gyro_x},{self.gyro_y},{self.gyro_z},{self.mag_x},{self.mag_y},{self.mag_z},{self.alt}\n"
+        return "{time},{accel_x},{accel_y},{accel_z},{gyro_x},{gyro_y},{gyro_z},{mag_x},{mag_y},{mag_z},{alt}\n".format(time = self.time,accel_x = self.accel_x,accel_y = self.accel_y,accel_z = self.accel_z,gyro_x = self.gyro_x,gyro_y = self.gyro_y,gyro_z = self.gyro_z,mag_x = self.mag_x,mag_y = self.mag_y,mag_z = self.mag_z,alt = self.alt)
 
 class EndFrame:
     def to_json(self):
@@ -70,19 +82,19 @@ class UDPProtocol:
         if not self.started:
             if "start" in data.decode("ascii"):
                 self.started = True
-                # self.file = open(f"dumps/broadcast_{datetime.now().strftime('%H_%M_%S_%m_%d_%Y')}.csv", "w")
+                self.file = open("dumps/broadcast_{now}.csv".format(now=datetime.now().strftime('%H_%M_%S_%m_%d_%Y')), "w")
                 print("starting")
             return
         
         if is_end_msg(data):
-            # self.file.close()
+            self.file.close()
             self.started = False
             self.queue.put_nowait(EndFrame())
             print("stopped")
             return
         
         for frame in parse(data):
-            # self.file.write(frame.to_csv())
+            self.file.write(frame.to_csv())
             self.queue.put_nowait(frame) #Won't error since the queue must have an unlimited size
 
 class Websockets:
@@ -100,7 +112,7 @@ class Websockets:
         try:
             while True:
                 data = await websocket.recv()
-                print(f"{path} sent {data}") #Basically discard data
+                print("{path} sent {data}").format(path=path, data=data) #Basically discard data
         except websockets.exceptions.ConnectionClosed:
             print(self.clients, path)
             del self.clients[path]
