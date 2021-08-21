@@ -147,5 +147,5 @@ async def main():
         await asyncio.sleep(60*60)
 
 if __name__ == "__main__":
-    loop = asynchio.get_event_loop()
+    loop = asyncio.get_event_loop()
     loop.run_forever(main())
