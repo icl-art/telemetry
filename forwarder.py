@@ -136,7 +136,7 @@ async def main():
 
     loop = asyncio.get_event_loop()
 
-    await websockets.serve(ws.handler, IP)
+    await websockets.serve(ws.handler, IP, port=8082)
     await loop.create_datagram_endpoint(
         lambda: UDPProtocol(queue),
         local_addr=(IP, UDP_PORT),
