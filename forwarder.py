@@ -106,6 +106,8 @@ class Websockets:
         self.msg_lock = asyncio.Lock()
 
     async def handler(self, websocket, path):
+        print(path)
+        print(websocket)
         self.clients[path] = websocket
         async with self.msg_lock:
             for msg in self.msgs:
