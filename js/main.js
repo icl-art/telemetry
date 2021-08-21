@@ -11,7 +11,7 @@ const AHRS = require("ahrs");
         createChart("z", 0, 100000, -20, 20, "#0000FF");
         
         //let socket = new WebSocket(window.location.href.replace(/^http/, "ws"));
-        let socket = new WebSocket("35.229.97.111");
+        let socket = new WebSocket("wss://shreybohra.com");
         let msgs = [];
         socket.onopen = function () {
             console.log("socket opened");
