@@ -139,7 +139,7 @@ async def main():
 
     loop = asyncio.get_event_loop()
 
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
     ssl_context.load("/etc/letsencrypt/live/bohra.uk/fullchain.pem")
 
     await websockets.serve(ws.handler, "0.0.0.0", port=8082, ssl=ssl_context)
