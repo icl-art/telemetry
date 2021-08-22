@@ -2,6 +2,7 @@ import asyncio
 import websockets
 import struct
 import datetime
+import ssl
 
 IP = "10.142.0.2"
 UDP_PORT = 8080
@@ -138,7 +139,10 @@ async def main():
 
     loop = asyncio.get_event_loop()
 
-    await websockets.serve(ws.handler, IP, port=8082)
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_context.load("/etc/letsencrypt/live/bohra.uk/fullchain.pem")
+
+    await websockets.serve(ws.handler, "0.0.0.0", port=8082, ssl=ssl_context)
     await loop.create_datagram_endpoint(
         lambda: UDPProtocol(queue),
         local_addr=(IP, UDP_PORT),
