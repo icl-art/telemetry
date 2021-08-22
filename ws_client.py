@@ -7,10 +7,11 @@ import websockets
 async def hello():
     uri = "wss://shreybohra.com:2053/"
     async with websockets.connect(uri, ssl = True) as websocket:
-        name = input("Message: ")
+        while True:
+            msg = input("Message: ")
 
-        await websocket.send(name)
-        print(f"> {name}")
+            await websocket.send(msg)
+            print(f"> {msg}")
 
         # greeting = await websocket.recv()
         # print(f"< {greeting}")
