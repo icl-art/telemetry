@@ -1,6 +1,4 @@
 import asyncio
-import pathlib
-import ssl
 import websockets
 
 
