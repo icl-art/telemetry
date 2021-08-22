@@ -9,3 +9,7 @@ To update the page:
 4. Start the forwarding script - 'python3 forwarder.py'
 
 If the embedded page is broken, try the direct link.
+
+forwarder.py is set up to be executable on the remote server. 
+To run the script in the background, run `nohup python3 forwarder.py &` in the correct directory.
+To end the script, run `ps az | grep forwarder.py` and make a note of the PID. Then, run `kill PID`.
