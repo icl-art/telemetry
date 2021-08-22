@@ -29,34 +29,22 @@ class Frame:
         self.alt = alt
 
     def to_json(self):
-        return "{" + """
-        \"time\": {time},
-        \"accel_x\": {accel_x},
-        \"accel_y\": {accel_y},
-        \"accel_z\": {accel_z},
-        \"gyro_x\": {gyro_x},
-        \"gyro_y\": {gyro_y},
-        \"gyro_z\": {gyro_z},
-        \"mag_x\": {mag_x},
-        \"mag_y\": {mag_y},
-        \"mag_z\": {mag_z},
-        \"alt\": {alt}
-        """.format(
-            time = self.time,
-            accel_x = self.accel_x,
-            accel_y = self.accel_y,
-            accel_z = self.accel_z,
-            gyro_x = self.gyro_x,
-            gyro_y = self.gyro_y,
-            gyro_z = self.gyro_z,
-            mag_x = self.mag_x,
-            mag_y = self.mag_y,
-            mag_z = self.mag_z,
-            alt = self.alt
-        ).replace(" ", "") + "}"
+        return "{" + f"""
+        \"time\": {self.time},
+        \"accel_x\": {self.accel_x},
+        \"accel_y\": {self.accel_y},
+        \"accel_z\": {self.accel_z},
+        \"gyro_x\": {self.gyro_x},
+        \"gyro_y\": {self.gyro_y},
+        \"gyro_z\": {self.gyro_z},
+        \"mag_x\": {self.mag_x},
+        \"mag_y\": {self.mag_y},
+        \"mag_z\": {self.mag_z},
+        \"alt\": {self.alt}
+        """.replace(" ", "") + "}"
 
     def to_csv(self):
-        return "{time},{accel_x},{accel_y},{accel_z},{gyro_x},{gyro_y},{gyro_z},{mag_x},{mag_y},{mag_z},{alt}\n".format(time = self.time,accel_x = self.accel_x,accel_y = self.accel_y,accel_z = self.accel_z,gyro_x = self.gyro_x,gyro_y = self.gyro_y,gyro_z = self.gyro_z,mag_x = self.mag_x,mag_y = self.mag_y,mag_z = self.mag_z,alt = self.alt)
+        return f"{self.time},{self.accel_x},{self.accel_y},{self.accel_z},{self.gyro_x},{self.gyro_y},{self.gyro_z},{self.mag_x},{self.mag_y},{self.mag_z},{self.alt}\n"
 
 class EndFrame:
     def to_json(self):
@@ -84,19 +72,19 @@ class UDPProtocol:
         if not self.started:
             if "start" in data.decode("ascii"):
                 self.started = True
-                #self.file = open("dumps/broadcast_{now}.csv".format(now=datetime.now().strftime('%H_%M_%S_%m_%d_%Y')), "w")
+                # self.file = open(f"dumps/broadcast_{datetime.now().strftime('%H_%M_%S_%m_%d_%Y')}.csv", "w")
                 print("starting")
             return
         
         if is_end_msg(data):
-            #self.file.close()
+            # self.file.close()
             self.started = False
             self.queue.put_nowait(EndFrame())
             print("stopped")
             return
         
         for frame in parse(data):
-            #self.file.write(frame.to_csv())
+            # self.file.write(frame.to_csv())
             self.queue.put_nowait(frame) #Won't error since the queue must have an unlimited size
 
 class Websockets:
@@ -116,7 +104,7 @@ class Websockets:
         try:
             while True:
                 data = await websocket.recv()
-                print("{path} sent {data}").format(path=path, data=data) #Basically discard data
+                print(f"{path} sent {data}") #Basically discard data
         except websockets.exceptions.ConnectionClosed:
             print(self.clients, path)
             del self.clients[path]
@@ -139,8 +127,8 @@ async def main():
 
     loop = asyncio.get_event_loop()
 
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    ssl_context.load_cert_chain("/etc/letsencrypt/live/bohra.uk/fullchain.pem", "/etc/letsencrypt/live/bohra.uk/privkey.pem")
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    ssl_context.load("/etc/letsencrypt/live/bohra.uk/fullchain.pem")
 
     await websockets.serve(ws.handler, "0.0.0.0", port=8082, ssl=ssl_context)
     await loop.create_datagram_endpoint(
