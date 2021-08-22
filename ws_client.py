@@ -5,7 +5,7 @@ import websockets
 
 
 async def hello():
-    uri = "wss://35.229.97.111:8082"
+    uri = "wss://shreybohra.com:2053/"
     async with websockets.connect(uri, ssl = True) as websocket:
         name = input("Message: ")
 
