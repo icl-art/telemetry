@@ -17,7 +17,7 @@ sock.sendto(bytes("start", "ascii"), (IP, UDP_PORT))
 alt = lambda x: -0.00025*x*(x-1207)
 i = 0
 for vals in data:
-    arr = bytearray(45)
+    arr = bytearray(37)
     struct.pack_into("b", arr, 0, 97)
     struct.pack_into("f", arr, 1+0, vals[0])
     struct.pack_into("f", arr, 1+4, vals[1])
@@ -27,7 +27,7 @@ for vals in data:
     struct.pack_into("f", arr, 1+20, vals[5])
     struct.pack_into("f", arr, 1+24, vals[6])
     struct.pack_into("f", arr, 1+28, vals[7])
-    struct.pack_into("f", arr, 1+40, alt(i) + random.uniform(-3, 3))
+    struct.pack_into("f", arr, 1+32, alt(i) + random.uniform(-3, 3))
     sock.sendto(bytes(arr), (IP, UDP_PORT))
     i += 1
 
