@@ -46,7 +46,7 @@ setInterval(async () => {
 
     let sinp = 2 * (w * y - z * x);
     let pitch = 0;
-    if (abs(sinp) >= 1) {
+    if (Math.abs(sinp) >= 1) {
         pitch = copySign(Math.PI / 2, sinp); // use 90 degrees if out of range
     } else{
         pitch = Math.asin(sinp);
