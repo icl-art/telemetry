@@ -35,28 +35,7 @@ setInterval(async () => {
         return;
     }
 
-    let x = data["quat_i"];
-    let y = data["quat_j"];
-    let z = data["quat_k"];
-    let w = data["quat_real"];
-    
-    let sinr_cosp = 2 * (w * x + y * z);
-    let cosr_cosp = 1 - 2 * (x * x + y * y);
-    let roll = Math.atan2(sinr_cosp, cosr_cosp);
-
-    let sinp = 2 * (w * y - z * x);
-    let pitch = 0;
-    if (Math.abs(sinp) >= 1) {
-        pitch = copySign(Math.PI / 2, sinp); // use 90 degrees if out of range
-    } else{
-        pitch = Math.asin(sinp);
-    }
-    // yaw (z-axis rotation)
-    let siny_cosp = 2 * (w * z + x * y);
-    let cosy_cosp = 1 - 2 * (y * y + z * z);
-    yaw = Math.atan2(siny_cosp, cosy_cosp);
-
-    set_euler(roll, pitch, yaw);
+    set_euler(data["roll"],data["pitch"],data["yaw"]);
 
     conn.innerHTML = "CON";
     conn.style.color = "#03a678"

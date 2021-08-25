@@ -4,6 +4,7 @@ import struct
 import math
 from datetime import datetime
 import ssl
+import math
 
 IP = "10.142.0.2"
 UDP_PORT = 8080
@@ -19,16 +20,40 @@ def pressure_to_altitude(pressure: float) -> float:
     alt = 44305.54 * ((1-(pressure/SEA_PRESSURE)**0.190284))
     return alt
 
+def euler_from_quaternion(x, y, z, w):
+    """
+    Convert a quaternion into euler angles (roll, pitch, yaw)
+    roll is rotation around x in radians (counterclockwise)
+    pitch is rotation around y in radians (counterclockwise)
+    yaw is rotation around z in radians (counterclockwise)
+    """
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + y * y)
+    roll_x = math.atan2(t0, t1)
+
+    t2 = +2.0 * (w * y - z * x)
+    t2 = +1.0 if t2 > +1.0 else t2
+    t2 = -1.0 if t2 < -1.0 else t2
+    pitch_y = math.asin(t2)
+
+    t3 = +2.0 * (w * z + x * y)
+    t4 = +1.0 - 2.0 * (y * y + z * z)
+    yaw_z = math.atan2(t3, t4)
+
+    return roll_x, pitch_y, yaw_z # in radians
+
 class Frame:
     def __init__(self, time, acc_x, acc_y, acc_z, quat_i, quat_j, quat_k, quat_real,alt):
         self.time = time
         self.acc_x = acc_x
         self.acc_y = acc_y
         self.acc_z = acc_z
-        self.quat_i = quat_i
-        self.quat_j = quat_j
-        self.quat_k = quat_k
-        self.quat_real = quat_real
+        
+        roll, pitch, yaw = euler_from_quaternion(quat_i, quat_j, quat_k, quat_real)
+        
+        self.roll = roll
+        self.pitch = pitch
+        self.yaw = yaw
         self.alt = alt
 
     def to_json(self):
@@ -37,15 +62,14 @@ class Frame:
         \"acc_x\": {self.acc_x},
         \"acc_y\": {self.acc_y},
         \"acc_z\": {self.acc_z},
-        \"quat_i\": {self.quat_i},
-        \"quat_j\": {self.quat_j},
-        \"quat_k\": {self.quat_k},
-        \"quat_real\": {self.quat_real},
+        \"roll\": {self.roll},
+        \"pitch\": {self.pitch},
+        \"yaw\": {self.yaw},
         \"alt\": {pressure_to_altitude(self.alt)}
         """.replace(" ", "") + "}"
 
     def to_csv(self):
-        return f"{self.time},{self.acc_x},{self.acc_y},{self.acc_z},{self.quat_i},{self.quat_j},{self.quat_k},{self.quat_real},{self.alt}\n"
+        return f"{self.time},{self.acc_x},{self.acc_y},{self.acc_z},{self.roll},{self.pitch},{self.yaw},{self.alt}\n"
 
 class EndFrame:
     def to_json(self):
