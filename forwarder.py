@@ -145,6 +145,7 @@ class Websockets:
             async with self.msg_lock:
                 if frame.to_json() == "END":
                     self.msgs.clear()
+                    print ("message buffer cleared")
                 else:
                     self.msgs.append(frame)
 

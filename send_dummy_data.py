@@ -1,6 +1,7 @@
 import socket
 import struct
 import random
+import time
 
 with open("sample_data.csv", "r") as f:
     data = (list(map(float, i.split(","))) for i in f.readlines())
@@ -31,4 +32,6 @@ for vals in data:
     sock.sendto(bytes(arr), (IP, UDP_PORT))
     i += 1
 
-sock.sendto(bytes("end", "ascii"), (IP, UDP_PORT))
+for i in range(5): # send multiple end packets to ensure received
+    time.sleep(0.5)
+    sock.sendto(bytes("end", "ascii"), (IP, UDP_PORT))
