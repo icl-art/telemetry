@@ -15,7 +15,7 @@ def is_end_msg(msg):
 
 def pressure_to_altitude(pressure: float) -> float:
     power = math.log10(pressure/SEA_PRESSURE)/5.2558797
-    return (10**power - 1) / (-6.8755856e-6)
+    return 0.3048 * (10**power - 1) / (-6.8755856e-6)
 
 class Frame:
     def __init__(self, time, acc_x, acc_y, acc_z, quat_i, quat_j, quat_k, quat_real,alt):
