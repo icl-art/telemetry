@@ -2,14 +2,14 @@ import asyncio
 import websockets
 import struct
 import math
-import datetime
+from datetime import datetime
 import ssl
 
 IP = "10.142.0.2"
 UDP_PORT = 8080
 
 FRAME_SIZE = 4 + 12 + 16 + 4  # time, accel, quaternion, altitude
-SEA_PRESSURE = 1 #TODO: get a weather api
+SEA_PRESSURE = 101.325 #TODO: get a weather api
 
 # This exists in case a normal packet accidentally has the bytes "end" in it, which would mess things up
 def is_end_msg(msg):
@@ -88,8 +88,8 @@ class UDPProtocol:
             for frame in parse(data):
                 self.file.write(frame.to_csv())
                 self.queue.put_nowait(frame) #Won't error since the queue must have an unlimited size
-        except:
-            print("Corrupted frame")
+        except Exception as e:
+            print("Corrupted frame", e)
 
 class Websockets:
     def __init__(self, queue):
