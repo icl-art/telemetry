@@ -43,9 +43,9 @@ setInterval(async () => {
 
     conn.innerHTML = "LIVE";
     conn.style.color = "#03a678"
-    update_x(data["time"], data["accel_x"]);
-    update_y(data["time"], data["accel_y"]);
-    update_z(data["time"], data["accel_z"]);
+    update_x(data["time"], data["acc_x"]);
+    update_y(data["time"], data["acc_y"]);
+    update_z(data["time"], data["acc_z"]);
     update_altitude(data["time"], data["alt"]);
     altitude.innerHTML = data["alt"].toFixed(2) + "m";
     velocity.innerHTML = ((data["alt"] - prev_alt) / (data["time"] - prev_time)).toFixed(2) + "m/s";

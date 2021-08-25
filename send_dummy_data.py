@@ -14,7 +14,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
 sock.sendto(bytes("start", "ascii"), (IP, UDP_PORT))
 
 #Data has length 1207 - use -0.00025x(x-1207) to simulate the altitude
-alt = lambda x: -0.00025*x*(x-1207)
+# alt = lambda x: -0.00025*x*(x-1207)
 i = 0
 for vals in data:
     arr = bytearray(37)
@@ -27,7 +27,7 @@ for vals in data:
     struct.pack_into("f", arr, 1+20, vals[5])
     struct.pack_into("f", arr, 1+24, vals[6])
     struct.pack_into("f", arr, 1+28, vals[7])
-    struct.pack_into("f", arr, 1+32, alt(i) + random.uniform(-3, 3))
+    struct.pack_into("f", arr, 1+32, random.uniform(712.25, 1013.25))
     sock.sendto(bytes(arr), (IP, UDP_PORT))
     i += 1
 
