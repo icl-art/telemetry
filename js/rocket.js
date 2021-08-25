@@ -26,7 +26,7 @@ window.addEventListener("resize", function () {
 });
 
 let loader = new STLLoader();
-loader.load('https://shreybohra.com/wp-content/uploads/ICLR/telemetry/apex.png', function (geometry) {
+loader.load('apex.png', function (geometry) {
     console.log(geometry);
     let material = new THREE.MeshNormalMaterial({
         color: 0x6c7a89,
