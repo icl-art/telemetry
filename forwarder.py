@@ -5,7 +5,7 @@ import struct
 IP = "192.168.1.16"
 UDP_PORT = 8080
 
-FRAME_SIZE = 4 + 12 + 12 + 12 + 4  # time, accel, gyro, mag, alt
+FRAME_SIZE = 4 + 12 + 16 + 4  # time, accel, quaternion, altitude
 
 # This exists in case a normal packet accidentally has the bytes "end" in it, which would mess things up
 def is_end_msg(msg):
@@ -13,8 +13,11 @@ def is_end_msg(msg):
 
 
 class Frame:
-    def __init__(self, time, quat_i, quat_j, quat_k, quat_real,alt):
+    def __init__(self, time, acc_x, acc_y, acc_z, quat_i, quat_j, quat_k, quat_real,alt):
         self.time = time
+        self.acc_x = acc_x
+        self.acc_y = acc_y
+        self.acc_z = acc_z
         self.quat_i = quat_i
         self.quat_j = quat_j
         self.quat_k = quat_k
@@ -24,6 +27,9 @@ class Frame:
     def to_json(self):
         return "{" + f"""
         \"time\": {self.time},
+        \"acc_x\": {self.acc_x},
+        \"acc_y\": {self.acc_y},
+        \"acc_z\": {self.acc_z},
         \"quat_i\": {self.quat_i},
         \"quat_j\": {self.quat_j},
         \"quat_k\": {self.quat_k},
@@ -32,7 +38,7 @@ class Frame:
         """.replace(" ", "") + "}"
 
     def to_csv(self):
-        return f"{self.time},{self.quat_i},{self.quat_j},{self.quat_k},{self.quat_real},{self.alt}\n"
+        return f"{self.time},{self.acc_x},{self.acc_y},{self.acc_z},{self.quat_i},{self.quat_j},{self.quat_k},{self.quat_real},{self.alt}\n"
 
 class EndFrame:
     def to_json(self):
