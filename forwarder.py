@@ -9,7 +9,7 @@ IP = "10.142.0.2"
 UDP_PORT = 8080
 
 FRAME_SIZE = 4 + 12 + 16 + 4  # time, accel, quaternion, altitude
-SEA_PRESSURE = 101.325 #TODO: get a weather api
+SEA_PRESSURE = 1013.25 #TODO: get a weather api
 
 # This exists in case a normal packet accidentally has the bytes "end" in it, which would mess things up
 def is_end_msg(msg):
