@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import struct
 import math
-import datetime
+from datetime import datetime
 import ssl
 
 IP = "192.168.1.16"
@@ -88,8 +88,8 @@ class UDPProtocol:
             for frame in parse(data):
                 self.file.write(frame.to_csv())
                 self.queue.put_nowait(frame) #Won't error since the queue must have an unlimited size
-        except:
-            print("Corrupted frame")
+        except Exception as e:
+            print("Corrupted frame", e)
 
 class Websockets:
     def __init__(self, queue):

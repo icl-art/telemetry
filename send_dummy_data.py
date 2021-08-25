@@ -6,7 +6,7 @@ with open("sample_data.csv", "r") as f:
     data = (list(map(float, i.split(","))) for i in f.readlines())
 
 
-IP = "shreybohra.com"
+IP = "35.229.97.111"
 UDP_PORT = 8080
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
@@ -27,8 +27,6 @@ for vals in data:
     struct.pack_into("f", arr, 1+20, vals[5])
     struct.pack_into("f", arr, 1+24, vals[6])
     struct.pack_into("f", arr, 1+28, vals[7])
-    struct.pack_into("f", arr, 1+32, vals[8])
-    struct.pack_into("f", arr, 1+36, vals[9])
     struct.pack_into("f", arr, 1+40, alt(i) + random.uniform(-3, 3))
     sock.sendto(bytes(arr), (IP, UDP_PORT))
     i += 1
