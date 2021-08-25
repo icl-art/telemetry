@@ -5,7 +5,7 @@ import math
 from datetime import datetime
 import ssl
 
-IP = "192.168.1.16"
+IP = "10.142.0.2"
 UDP_PORT = 8080
 
 FRAME_SIZE = 4 + 12 + 16 + 4  # time, accel, quaternion, altitude
