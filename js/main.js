@@ -3,7 +3,7 @@ createChart("x", 0, 100000, -20, 20, "#FF0000");
 createChart("y", 0, 100000, -20, 20, "#00FF00");
 createChart("z", 0, 100000, -20, 20, "#0000FF");
 
-let socket = new WebSocket(window.location.href.replace(/^http/, "ws"));
+let socket = new WebSocket("wss://shreybohra.com:2053");
 let msgs = [];
 socket.onopen = function () {
     console.log("socket opened");

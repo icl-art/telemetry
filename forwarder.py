@@ -2,6 +2,8 @@ import asyncio
 import websockets
 import struct
 import math
+import datetime
+import ssl
 
 IP = "192.168.1.16"
 UDP_PORT = 8080
@@ -71,7 +73,7 @@ class UDPProtocol:
         if not self.started:
             if "start" in data.decode("ascii"):
                 self.started = True
-                self.file = open("dumps/broadcast_{now}.csv".format(now=datetime.now().strftime('%H_%M_%S_%m_%d_%Y')), "w")
+                self.file = open(f"dumps/broadcast_{datetime.now().strftime('%H_%M_%S_%m_%d_%Y')}.csv", "w")
                 print("starting")
             return
         
@@ -97,6 +99,8 @@ class Websockets:
         self.msg_lock = asyncio.Lock()
 
     async def handler(self, websocket, path):
+        print(path)
+        print(websocket)
         self.clients[path] = websocket
         async with self.msg_lock:
             for msg in self.msgs:
@@ -104,7 +108,7 @@ class Websockets:
         try:
             while True:
                 data = await websocket.recv()
-                print("{path} sent {data}").format(path=path, data=data) #Basically discard data
+                print(f"{path} sent {data}") #Basically discard data
         except websockets.exceptions.ConnectionClosed:
             print(self.clients, path)
             del self.clients[path]
@@ -125,9 +129,12 @@ async def main():
     queue = asyncio.Queue()
     ws = Websockets(queue)
 
-    loop = asyncio.get_running_loop()
+    loop = asyncio.get_event_loop()
 
-    await websockets.serve(ws.handler, IP)
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_context.load_cert_chain("/etc/letsencrypt/live/bohra.uk/fullchain.pem", "/etc/letsencrypt/live/bohra.uk/privkey.pem")
+
+    await websockets.serve(ws.handler, "0.0.0.0", port = 2053, ssl=ssl_context)
     await loop.create_datagram_endpoint(
         lambda: UDPProtocol(queue),
         local_addr=(IP, UDP_PORT),
@@ -139,4 +146,5 @@ async def main():
         await asyncio.sleep(60*60)
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
