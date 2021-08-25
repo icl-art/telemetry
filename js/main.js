@@ -1,4 +1,4 @@
-createChart("altitude", 0, 100000, 0, 100, "#FFFFFF");
+createChart("altitude", 0, 100000, 0, 3000, "#FFFFFF");
 createChart("x", 0, 100000, -20, 20, "#FF0000");
 createChart("y", 0, 100000, -20, 20, "#00FF00");
 createChart("z", 0, 100000, -20, 20, "#0000FF");
