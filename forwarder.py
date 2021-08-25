@@ -1,16 +1,21 @@
 import asyncio
 import websockets
 import struct
+import math
 
 IP = "192.168.1.16"
 UDP_PORT = 8080
 
 FRAME_SIZE = 4 + 12 + 16 + 4  # time, accel, quaternion, altitude
+SEA_PRESSURE = 1 #TODO: get a weather api
 
 # This exists in case a normal packet accidentally has the bytes "end" in it, which would mess things up
 def is_end_msg(msg):
     return msg[0] == ord("e")
 
+def pressure_to_altitude(pressure: float) -> float:
+    power = math.log10(pressure/SEA_PRESSURE)/5.2558797
+    return (10**power - 1) / (-6.8755856e-6)
 
 class Frame:
     def __init__(self, time, acc_x, acc_y, acc_z, quat_i, quat_j, quat_k, quat_real,alt):
@@ -34,7 +39,7 @@ class Frame:
         \"quat_j\": {self.quat_j},
         \"quat_k\": {self.quat_k},
         \"quat_real\": {self.quat_real},
-        \"alt\": {self.alt}
+        \"alt\": {pressure_to_altitude(self.alt)}
         """.replace(" ", "") + "}"
 
     def to_csv(self):
