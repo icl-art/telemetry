@@ -6,7 +6,7 @@ with open("sample_data.csv", "r") as f:
     data = (list(map(float, i.split(","))) for i in f.readlines())
 
 
-IP = "10.142.0.2"
+IP = "shreybohra.com"
 UDP_PORT = 8080
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP

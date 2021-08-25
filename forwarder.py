@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import struct
 
-IP = "10.142.0.2"
+IP = "192.168.1.16"
 UDP_PORT = 8080
 
 FRAME_SIZE = 4 + 12 + 12 + 12 + 4  # time, accel, gyro, mag, alt
@@ -13,48 +13,26 @@ def is_end_msg(msg):
 
 
 class Frame:
-    def __init__(self, time, accel_x, accel_y, accel_z, gyro_x, gyro_y, gyro_z, mag_x, mag_y, mag_z, alt):
+    def __init__(self, time, quat_i, quat_j, quat_k, quat_real,alt):
         self.time = time
-        self.accel_x = accel_x
-        self.accel_y = accel_y
-        self.accel_z = accel_z
-        self.gyro_x = gyro_x
-        self.gyro_y = gyro_y
-        self.gyro_z = gyro_z
-        self.mag_x = mag_x
-        self.mag_y = mag_y
-        self.mag_z = mag_z
+        self.quat_i = quat_i
+        self.quat_j = quat_j
+        self.quat_k = quat_k
+        self.quat_real = quat_real
         self.alt = alt
 
     def to_json(self):
-        return "{" + """
-        \"time\": {time},
-        \"accel_x\": {accel_x},
-        \"accel_y\": {accel_y},
-        \"accel_z\": {accel_z},
-        \"gyro_x\": {gyro_x},
-        \"gyro_y\": {gyro_y},
-        \"gyro_z\": {gyro_z},
-        \"mag_x\": {mag_x},
-        \"mag_y\": {mag_y},
-        \"mag_z\": {mag_z},
-        \"alt\": {alt}
-        """.format(
-            time = self.time,
-            accel_x = self.accel_x,
-            accel_y = self.accel_y,
-            accel_z = self.accel_z,
-            gyro_x = self.gyro_x,
-            gyro_y = self.gyro_y,
-            gyro_z = self.gyro_z,
-            mag_x = self.mag_x,
-            mag_y = self.mag_y,
-            mag_z = self.mag_z,
-            alt = self.alt
-        ).replace(" ", "") + "}"
+        return "{" + f"""
+        \"time\": {self.time},
+        \"quat_i\": {self.quat_i},
+        \"quat_j\": {self.quat_j},
+        \"quat_k\": {self.quat_k},
+        \"quat_real\": {self.quat_real},
+        \"alt\": {self.alt}
+        """.replace(" ", "") + "}"
 
     def to_csv(self):
-        return "{time},{accel_x},{accel_y},{accel_z},{gyro_x},{gyro_y},{gyro_z},{mag_x},{mag_y},{mag_z},{alt}\n".format(time = self.time,accel_x = self.accel_x,accel_y = self.accel_y,accel_z = self.accel_z,gyro_x = self.gyro_x,gyro_y = self.gyro_y,gyro_z = self.gyro_z,mag_x = self.mag_x,mag_y = self.mag_y,mag_z = self.mag_z,alt = self.alt)
+        return f"{self.time},{self.quat_i},{self.quat_j},{self.quat_k},{self.quat_real},{self.alt}\n"
 
 class EndFrame:
     def to_json(self):
@@ -93,9 +71,12 @@ class UDPProtocol:
             print("stopped")
             return
         
-        for frame in parse(data):
-            self.file.write(frame.to_csv())
-            self.queue.put_nowait(frame) #Won't error since the queue must have an unlimited size
+        try:
+            for frame in parse(data):
+                self.file.write(frame.to_csv())
+                self.queue.put_nowait(frame) #Won't error since the queue must have an unlimited size
+        except:
+            print("Corrupted frame")
 
 class Websockets:
     def __init__(self, queue):
