@@ -52,4 +52,5 @@ setInterval(async () => {
     flight_time.innerHTML = (data["time"] / 1000).toFixed(2) + "s";
     prev_time = data["time"];
     prev_alt = data["alt"];
+    console.log(data)
 }, 50);

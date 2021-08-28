@@ -9,7 +9,7 @@ import math
 IP = "10.142.0.2"
 UDP_PORT = 8080
 
-FRAME_SIZE = 4 + 12 + 16 + 4  # time, accel, quaternion, altitude
+FRAME_SIZE = 32  # time, accel, quaternion, altitude. lat/lon
 SEA_PRESSURE = 1013.25 #TODO: get a weather api
 
 # This exists in case a normal packet accidentally has the bytes "end" in it, which would mess things up
@@ -43,7 +43,7 @@ def euler_from_quaternion(x, y, z, w):
     return roll_x, pitch_y, yaw_z # in radians
 
 class Frame:
-    def __init__(self, time, acc_x, acc_y, acc_z, quat_i, quat_j, quat_k, quat_real,alt):
+    def __init__(self, time, acc_x, acc_y, acc_z, quat_i, quat_j, quat_k, quat_real,alt, lat, lon):
         self.time = time
         self.acc_x = acc_x
         self.acc_y = acc_y
@@ -55,6 +55,8 @@ class Frame:
         self.pitch = pitch
         self.yaw = yaw
         self.alt = alt
+        self.lat = lat
+        self.lon = lon
 
     def to_json(self):
         return "{" + f"""
@@ -65,11 +67,13 @@ class Frame:
         \"roll\": {self.roll},
         \"pitch\": {self.pitch},
         \"yaw\": {self.yaw},
-        \"alt\": {pressure_to_altitude(self.alt)}
+        \"alt\": {pressure_to_altitude(self.alt)},
+        \"lat\": {self.lat},
+        \"lon\": {self.lon},
         """.replace(" ", "") + "}"
 
     def to_csv(self):
-        return f"{self.time},{self.acc_x},{self.acc_y},{self.acc_z},{self.roll},{self.pitch},{self.yaw},{self.alt}\n"
+        return f"{self.time},{self.acc_x},{self.acc_y},{self.acc_z},{self.roll},{self.pitch},{self.yaw},{self.alt},{self.lat},{self.lon}\n"
 
 class EndFrame:
     def to_json(self):
